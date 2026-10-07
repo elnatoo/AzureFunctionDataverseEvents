@@ -7,16 +7,16 @@ using Newtonsoft.Json.Linq;
 
 namespace AzureFunctionDataverseEvents
 {
-    public class Function1
+    public class DataverseRequestInspector
     {
-        private readonly ILogger<Function1> _logger;
+        private readonly ILogger<DataverseRequestInspector> _logger;
 
-        public Function1(ILogger<Function1> logger)
+        public DataverseRequestInspector(ILogger<DataverseRequestInspector> logger)
         {
             _logger = logger;
         }
 
-        [Function("Function1")]
+        [Function("DataverseRequestInspector")]
         public async Task<IActionResult> RunAsync([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest req)
         {
             //_logger.LogInformation("C# HTTP trigger function processed a request.");
