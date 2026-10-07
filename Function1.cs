@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AzureFunctionDataverseEvents
 {
@@ -15,10 +17,53 @@ namespace AzureFunctionDataverseEvents
         }
 
         [Function("Function1")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest req)
+        public async Task<IActionResult> RunAsync([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest req)
         {
+            //_logger.LogInformation("C# HTTP trigger function processed a request.");
+            //return new OkObjectResult("Welcome to Azure Functions!");
+
             _logger.LogInformation("C# HTTP trigger function processed a request.");
-            return new OkObjectResult("Welcome to Azure Functions!");
+
+            string queryParams = "";
+            foreach (var q in req.Query)
+            {
+                queryParams += $"Key: {q.Key} Value: {q.Value}\n";
+            }
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+
+            dynamic? data = JsonConvert.DeserializeObject(requestBody);
+            if (data == null)
+            {
+                return new BadRequestObjectResult("Request body is invalid or empty.");
+            }
+
+            string requestHeader = "";
+            foreach (var h in req.Headers)
+            {
+                requestHeader += $"Key: {h.Key} Value: {h.Value}\n";
+            }
+            _logger.LogInformation("Query Parameters:\n" + queryParams);
+            _logger.LogInformation("Request Header: \n" + requestHeader);
+            _logger.LogInformation("Request Body:\n" + requestBody);
+            string requestBodyFormatted = JValue.Parse(requestBody).ToString(Formatting.Indented);
+            _logger.LogInformation("Request Body Formatted:\n" + requestBodyFormatted);
+
+            try
+            {
+                dynamic target = data.InputParameters["Target"];
+
+                foreach (dynamic field in target.Attributes)
+                {
+                    _logger.LogInformation($"Name: {field.Key} Value: {field.Value}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.ToString());
+            }
+
+            return (ActionResult)new OkObjectResult(data.InitiatingUserId);
         }
     }
 
