@@ -2,7 +2,7 @@
 
 An HTTP-triggered Azure Function built on the **.NET Isolated Worker Model** designed to intercept, log, and inspect incoming webhook requests from **Microsoft Dataverse**. It serves as a debugging utility to visualize execution contexts, headers, payloads, and target record attributes.
 
-This project was built following the Microsoft Learn module: [Integrate Dataverse with Azure solutions](https://microsoft.com).
+This project was built following the Microsoft Learn module: [Integrate Dataverse Azure solutions](https://learn.microsoft.com/en-us/training/modules/integrate-dataverse-azure-solutions/).
 
 ## Key Features
 
